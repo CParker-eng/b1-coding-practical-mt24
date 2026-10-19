@@ -1,9 +1,9 @@
-class ControlDepth:
+class PDController:
   def __init__(self, Kp=0.15, Kd=0.6):
     self.Kp = Kp
     self.Kd = Kd
 
-  def control(self, reference, depth):
+  def controller(self, reference, depth):
     '''
     Control the depth of the UUV using a PD controller.
 
