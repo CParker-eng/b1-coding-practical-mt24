@@ -82,7 +82,7 @@ class Mission:
         reference = data["reference"].to_numpy()
         cave_height = data["cave_height"].to_numpy()
         cave_depth = data["cave_depth"].to_numpy()
-        
+
         return cls(reference, cave_height, cave_depth)
 
 
@@ -101,11 +101,29 @@ class ClosedLoop:
         actions = np.zeros(T)
         self.plant.reset_state()
 
+
+        observed_depths = []
+
         for t in range(T):
             positions[t] = self.plant.get_position()
             observation_t = self.plant.get_depth()
             # Call your controller here
-            self.plant.transition(actions[t], disturbances[t])
+
+            observed_depths.append(observation_t)
+            reference_history = list(mission.reference[:t+1])
+            depth_history = observed_depths.copy()
+
+            reference_history.append(reference_history[-1])
+            depth_history.append(depth_history[-1])
+
+            control_signals = self.controller.controller(
+                reference_history,
+                depth_history
+            )
+
+        actions[t] = control_signals[-1]
+
+        self.plant.transition(actions[t], disturbances[t])
 
         return Trajectory(positions)
         
