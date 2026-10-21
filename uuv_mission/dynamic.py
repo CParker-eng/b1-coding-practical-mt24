@@ -121,9 +121,9 @@ class ClosedLoop:
                 depth_history
             )
 
-        actions[t] = control_signals[-1]
+            actions[t] = control_signals[-1]
 
-        self.plant.transition(actions[t], disturbances[t])
+            self.plant.transition(actions[t], disturbances[t])
 
         return Trajectory(positions)
         
